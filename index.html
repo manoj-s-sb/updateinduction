@@ -277,7 +277,7 @@
         const subSteps = [];
         checkboxes.forEach((cb, idx) => {
           subSteps.push({
-            subStepId: cb.nextSibling.textContent.trim(),
+            id: cb.nextSibling.textContent.trim(),
             status: cb.checked ? "completed" : "pending"
           });
         });
