@@ -273,18 +273,27 @@
           return;
         }
         const checkboxGroup = document.getElementById("checkboxGroup");
-        const checkboxes = checkboxGroup.querySelectorAll(
-          "input[type='checkbox']"
-        );
+        const checkboxes = checkboxGroup.querySelectorAll("input[type='checkbox']");
+        const subSteps = [];
+        checkboxes.forEach((cb, idx) => {
+          subSteps.push({
+            subStepId: cb.nextSibling.textContent.trim(),
+            status: cb.checked ? "completed" : "pending"
+          });
+        });
 
-     
+        // Always include the "welcomeRegistration" subStep as completed
+        subSteps.unshift({
+          id: "welcomeRegistration",
+          status: "completed"
+        });
+
         try {
           const response = await axios.post(
             "https://sbcc-func-dev.azurewebsites.net/induction/status/update",
             {
               email: email,
-              subStepId: "attendingInduction",
-              status: "completed",
+              subSteps: subSteps
             }
           );
           alert("Induction status updated successfully!");
