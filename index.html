@@ -263,6 +263,37 @@
           alert("Failed to fetch induction data.");
         }
       });
+
+      const completeBtn = document.getElementById("completeBtn");
+
+      completeBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        if (!email) {
+          alert("Email is missing.");
+          return;
+        }
+        const checkboxGroup = document.getElementById("checkboxGroup");
+        const checkboxes = checkboxGroup.querySelectorAll(
+          "input[type='checkbox']"
+        );
+
+     
+        try {
+          const response = await axios.post(
+            "https://sbcc-func-dev.azurewebsites.net/induction/status/update",
+            {
+              email: email,
+              subStepId: "attendingInduction",
+              status: "completed",
+            }
+          );
+          alert("Induction status updated successfully!");
+          completeBtn.style.display = "none";
+        } catch (error) {
+          console.error("Update API Error:", error);
+          alert("Failed to update induction status.");
+        }
+      });
     </script>
   </body>
 </html>
