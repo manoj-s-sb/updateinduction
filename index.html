@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Induction Update</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: #f4f6fa;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+      }
+      .container {
+        background: #fff;
+        margin-top: 48px;
+        padding: 40px 32px 32px 32px;
+        border-radius: 16px;
+        box-shadow: 0 4px 24px rgba(33, 41, 90, 0.1);
+        min-width: 340px;
+        max-width: 95vw;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border: 1.5px solid #e0e3ea;
+        font-size: 0.96em;
+      }
+      .brand-logo {
+        width: 140px;
+        margin-bottom: 18px;
+        filter: drop-shadow(0 2px 8px rgba(33, 41, 90, 0.1));
+      }
+      .main-title {
+        font-size: 1.25em;
+        font-weight: 700;
+        color: #21295a;
+        margin-bottom: 18px;
+        letter-spacing: 0.5px;
+      }
+      .hidden {
+        display: none;
+      }
+      .checkbox-group {
+        margin: 28px 0 10px 0;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        align-items: flex-start;
+        width: 100%;
+      }
+      .checkbox-group label {
+        font-size: 0.98em;
+        font-weight: 500;
+        color: #21295a;
+        background: #f0f1f7;
+        padding: 10px 18px;
+        border-radius: 8px;
+        transition: background 0.2s, color 0.2s;
+        display: flex;
+        align-items: center;
+        border: 1px solid #e0e3ea;
+      }
+      .checkbox-group label:hover {
+        background: #e6e8f3;
+        color: #21295a;
+      }
+      .checkbox-group input[type="checkbox"] {
+        width: 22px;
+        height: 22px;
+        margin-right: 12px;
+        accent-color: #21295a;
+      }
+      .completed-label {
+        margin-top: 22px;
+        font-weight: bold;
+        color: #fff;
+        font-size: 1em;
+        letter-spacing: 0.5px;
+        background: #21295a;
+        border: none;
+        padding: 12px 28px;
+        border-radius: 8px;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(33, 41, 90, 0.1);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      .completed-label:hover {
+        background: #181c3a;
+        box-shadow: 0 4px 16px rgba(33, 41, 90, 0.16);
+      }
+      button,
+      input[type="text"] {
+        font-size: 0.98em;
+        padding: 10px 22px;
+        border-radius: 8px;
+        border: 1px solid #21295a;
+        margin-bottom: 0;
+      }
+      button {
+        background: #21295a;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+        box-shadow: 0 2px 8px rgba(33, 41, 90, 0.08);
+        transition: background 0.2s, box-shadow 0.2s;
+      }
+      button:hover {
+        background: #181c3a;
+        box-shadow: 0 4px 16px rgba(33, 41, 90, 0.12);
+      }
+      input[type="text"] {
+        border: 1.5px solid #bfc3d9;
+        background: #f8f9fb;
+        margin-right: 12px;
+        width: 220px;
+        transition: border 0.2s;
+      }
+      input[type="text"]:focus {
+        border: 2px solid #21295a;
+        outline: none;
+        background: #f0f1f7;
+      }
+      label {
+        font-size: 1em;
+        cursor: pointer;
+      }
+      .section-title {
+        font-size: 0.98em;
+        font-weight: 600;
+        color: #21295a;
+        margin-bottom: 8px;
+        margin-top: 18px;
+        letter-spacing: 0.2px;
+      }
+    </style>
+    <style>
+      @media (max-width: 600px) {
+        .container {
+          min-width: unset;
+          width: 98vw;
+          padding: 18px 4vw 18px 4vw;
+          border-radius: 10px;
+        }
+        .brand-logo {
+          width: 90px;
+          margin-bottom: 12px;
+        }
+        .main-title {
+          font-size: 1em;
+          margin-bottom: 12px;
+        }
+        .section-title {
+          font-size: 0.92em;
+          margin-bottom: 6px;
+        }
+        .checkbox-group label {
+          font-size: 0.92em;
+          padding: 8px 10px;
+        }
+        .checkbox-group input[type="checkbox"] {
+          width: 18px;
+          height: 18px;
+          margin-right: 8px;
+        }
+        button,
+        input[type="text"],
+        .completed-label {
+          font-size: 0.92em;
+          padding: 8px 12px;
+        }
+        input[type="text"] {
+          width: 60vw;
+          min-width: 120px;
+        }
+        .completed-label {
+          padding: 10px 12px;
+          font-size: 0.95em;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="../brand.png" alt="Brand Logo" class="brand-logo" />
+      <div class="main-title">Induction Update Portal</div>
+      <button id="updateBtn">Update Induction</button>
+      <div id="searchSection" class="hidden">
+        <div class="section-title">Search by Email</div>
+        <input
+          type="text"
+          id="emailInput"
+          placeholder="Enter email to search"
+        />
+        <button id="searchBtn">Search</button>
+      </div>
+      <div id="checkboxSection" class="hidden">
+        <div class="section-title">Mark Induction Steps</div>
+        <div class="checkbox-group" id="checkboxGroup">
+          <!-- Checkboxes will be rendered here -->
+        </div>
+        <button class="completed-label" id="completeBtn">
+          Complete Induction
+        </button>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+      const updateBtn = document.getElementById("updateBtn");
+      const searchSection = document.getElementById("searchSection");
+      const checkboxSection = document.getElementById("checkboxSection");
+      const searchBtn = document.getElementById("searchBtn");
+      const emailInput = document.getElementById("emailInput");
+
+      updateBtn.addEventListener("click", () => {
+        updateBtn.classList.add("hidden");
+        searchSection.classList.remove("hidden");
+      });
+
+      searchBtn.addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        if (!email) {
+          alert("Please enter an email to search.");
+          return;
+        }
+        try {
+          const response = await axios.post(
+            `https://sbcc-func-dev.azurewebsites.net/induction/search`,
+            { email: email }
+          );
+          console.log("API Response:", response.data);
+          checkboxSection.classList.remove("hidden");
+
+          // Dynamically render checkboxes
+          const checkboxGroup = document.getElementById("checkboxGroup");
+          checkboxGroup.innerHTML = ""; // Clear previous checkboxes
+
+          const subSteps = response.data.data.subSteps;
+          let allCompleted = true;
+          subSteps.forEach((step, idx) => {
+            const label = document.createElement("label");
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.id = `cb${idx + 1}`;
+            checkbox.checked = step.status === "completed";
+            checkbox.disabled = step.status === "completed";
+            if (step.status !== "completed") {
+              allCompleted = false;
+            }
+            label.appendChild(checkbox);
+            label.appendChild(document.createTextNode(" " + step.id));
+            checkboxGroup.appendChild(label);
+          });
+          // Disable the Complete Induction button if all steps are completed
+          const completeBtn = document.getElementById("completeBtn");
+          completeBtn.style.display = allCompleted ? "none" : "block";
+        } catch (error) {
+          console.error("API Error:", error);
+          alert("Failed to fetch induction data.");
+        }
+      });
+    </script>
+  </body>
+</html>
