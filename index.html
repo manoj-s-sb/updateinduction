@@ -93,6 +93,23 @@
         background: #181c3a;
         box-shadow: 0 4px 16px rgba(33, 41, 90, 0.16);
       }
+      .loading {
+        opacity: 0.6;
+        pointer-events: none;
+      }
+      .spinner {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #ffffff;
+        border-radius: 50%;
+        border-top-color: transparent;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
       button,
       input[type="text"] {
         font-size: 0.98em;
@@ -228,6 +245,13 @@
           alert("Please enter an email to search.");
           return;
         }
+
+        // Add loading state
+        searchBtn.classList.add("loading");
+        const originalText = searchBtn.textContent;
+        searchBtn.innerHTML = '<span class="spinner"></span>Searching...';
+        searchBtn.disabled = true;
+
         try {
           const response = await axios.post(
             `https://sbcc-func-dev.azurewebsites.net/induction/search`,
@@ -262,6 +286,11 @@
         } catch (error) {
           console.error("API Error:", error);
           alert("Failed to fetch induction data.");
+        } finally {
+          // Remove loading state
+          searchBtn.classList.remove("loading");
+          searchBtn.innerHTML = originalText;
+          searchBtn.disabled = false;
         }
       });
 
@@ -297,11 +326,23 @@
               subSteps: subSteps
             }
           );
-          alert("Induction status updated successfully!");
-          completeBtn.style.display = "none";
+          
+          // Check if status is 200 or 201 for success
+          if (response.status === 200 || response.status === 201) {
+            alert("Induction status updated successfully!");
+            completeBtn.style.display = "none";
+          } else {
+            alert("Failed to update induction status.");
+          }
         } catch (error) {
           console.error("Update API Error:", error);
-          alert("Failed to update induction status.");
+          
+          // Check if it's a 400 status error
+          if (error.response && error.response.status === 400) {
+            alert("Bad request: " + (error.response.data?.message || "Invalid request data"));
+          } else {
+            alert("Failed to update induction status.");
+          }
         }
       });
     </script>
