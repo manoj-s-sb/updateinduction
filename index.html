@@ -257,35 +257,49 @@
             `https://sbcc-func-dev.azurewebsites.net/induction/search`,
             { email: email }
           );
-          console.log("API Response:", response.data);
-          checkboxSection.classList.remove("hidden");
+          
+          // Check response status and show appropriate alert
+          if (response.status === 200 || response.status === 201) {
+            checkboxSection.classList.remove("hidden");
 
-          // Dynamically render checkboxes
-          const checkboxGroup = document.getElementById("checkboxGroup");
-          checkboxGroup.innerHTML = ""; // Clear previous checkboxes
+            // Dynamically render checkboxes
+            const checkboxGroup = document.getElementById("checkboxGroup");
+            checkboxGroup.innerHTML = ""; // Clear previous checkboxes
 
-          const subSteps = response.data.data.subSteps;
-          let allCompleted = true;
-          subSteps.forEach((step, idx) => {
-            const label = document.createElement("label");
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.id = `cb${idx + 1}`;
-            checkbox.checked = step.status === "completed";
-            checkbox.disabled = step.status === "completed";
-            if (step.status !== "completed") {
-              allCompleted = false;
-            }
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(" " + step.id));
-            checkboxGroup.appendChild(label);
-          });
-          // Disable the Complete Induction button if all steps are completed
-          const completeBtn = document.getElementById("completeBtn");
-          completeBtn.style.display = allCompleted ? "none" : "block";
+            const subSteps = response.data.data.subSteps;
+            let allCompleted = true;
+            subSteps.forEach((step, idx) => {
+              const label = document.createElement("label");
+              const checkbox = document.createElement("input");
+              checkbox.type = "checkbox";
+              checkbox.id = `cb${idx + 1}`;
+              checkbox.checked = step.status === "completed";
+              checkbox.disabled = step.status === "completed";
+              if (step.status !== "completed") {
+                allCompleted = false;
+              }
+              label.appendChild(checkbox);
+              label.appendChild(document.createTextNode(" " + step.id));
+              checkboxGroup.appendChild(label);
+            });
+            // Disable the Complete Induction button if all steps are completed
+            const completeBtn = document.getElementById("completeBtn");
+            completeBtn.style.display = allCompleted ? "none" : "block";
+            
+            // Show success alert for 200/201
+            alert(`Search successful! Status: ${response.status}`);
+          } else {
+            alert(`Unexpected response status: ${response.status}`);
+          }
         } catch (error) {
           console.error("API Error:", error);
-          alert("Failed to fetch induction data.");
+          
+          // Check if it's a 400 status error
+          if (error.response && error.response.status === 400) {
+            alert("Bad request (400): " + (error.response.data?.message || "Invalid request data"));
+          } else {
+            alert("Failed to fetch induction data.");
+          }
         } finally {
           // Remove loading state
           searchBtn.classList.remove("loading");
